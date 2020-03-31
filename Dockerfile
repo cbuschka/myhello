@@ -1,11 +1,14 @@
-FROM node:10.15-stretch-slim
+FROM golang:1.12-stretch as build
 
+WORKDIR /build
+COPY hello.go /build
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o hello hello.go
+
+FROM scratch
 WORKDIR /app
-COPY / /app
-RUN npm -g install yarn && \
-	yarn install
+COPY --from=build /build/hello /app
 
 EXPOSE 8080
 
-CMD [ "bash", "-c", "export PORT=8080; cd /app/ && exec node ./src/index.js" ]
+CMD [ "/app/hello" ]
 
