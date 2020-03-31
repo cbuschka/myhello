@@ -7,6 +7,13 @@ import (
     "net/http"
 )
 
+func logRequest(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		handler.ServeHTTP(w, r)
+	})
+}
+
 func main() {
     instanceId := rand.Intn(1000000)
 
@@ -16,7 +23,7 @@ func main() {
 
     listenAddr := ":8080"
     log.Printf("Binding to %s...\n", listenAddr)
-    if err := http.ListenAndServe(listenAddr, nil); err != nil && err != http.ErrServerClosed {
+    if err := http.ListenAndServe(listenAddr, logRequest(http.DefaultServeMux)); err != nil && err != http.ErrServerClosed {
         log.Fatal("Could not listen on %s: %v", listenAddr, err)
     }
 
