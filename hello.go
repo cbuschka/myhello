@@ -5,6 +5,7 @@ import (
     "log"
     "math/rand"
     "net/http"
+    "os"
 )
 
 func logRequest(handler http.Handler) http.Handler {
@@ -21,7 +22,11 @@ func main() {
         fmt.Fprintf(w, "Hello world from %d.", instanceId)
     })
 
-    listenAddr := ":8080"
+    port := os.Getenv("PORT")
+    if port == "" {
+      port = "8080"
+    }
+    listenAddr := fmt.Sprintf(":%s", port)
     log.Printf("Binding to %s...\n", listenAddr)
     if err := http.ListenAndServe(listenAddr, logRequest(http.DefaultServeMux)); err != nil && err != http.ErrServerClosed {
         log.Fatal("Could not listen on %s: %v", listenAddr, err)
