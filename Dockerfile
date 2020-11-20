@@ -1,4 +1,4 @@
-FROM golang:1.12-stretch as build
+FROM golang:1.15 as build
 
 WORKDIR /build
 COPY hello.go /build
