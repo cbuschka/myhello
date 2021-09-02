@@ -18,8 +18,13 @@ func logRequest(handler http.Handler) http.Handler {
 func main() {
     instanceId := rand.Intn(1000000)
 
+    message := os.Getenv("MESSAGE")
+    if message == "" {
+      message = "Hello world"
+    }
+
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello world from %d.", instanceId)
+        fmt.Fprintf(w, "'%s' from %d.", message, instanceId)
     })
 
     port := os.Getenv("PORT")
